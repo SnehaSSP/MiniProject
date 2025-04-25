@@ -14,15 +14,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Create Dockerfile dynamically
+    - name: Create Dockerfile in subdirectory
       run: |
-        cat <<EOF > Dockerfile
+        cat <<EOF > SnehaSP/MiniProject/Dockerfile
         FROM python:3.11-slim
 
-        # Avoid prompts during install
         ENV DEBIAN_FRONTEND=noninteractive
 
-        # Install Chrome & dependencies
+        # Install Chrome
         RUN apt-get update && apt-get install -y \
             wget unzip gnupg curl \
             fonts-liberation libappindicator3-1 libasound2 \
@@ -35,21 +34,20 @@ jobs:
             apt-get update && apt-get install -y google-chrome-stable && \
             rm -rf /var/lib/apt/lists/*
 
-        # Install Python dependencies
+        # Install Python packages
         COPY requirements.txt .
         RUN pip install --upgrade pip
         RUN pip install -r requirements.txt
 
-        # Copy project
+        # Copy your test framework files
         COPY . /app
         WORKDIR /app
 
-        # Run tests (pytest.ini handles the command)
         CMD ["pytest"]
         EOF
 
-    - name: Build Docker image
-      run: docker build -t pytest-selenium-image .
+    - name: Build Docker image from MiniProject
+      run: docker build -t pytest-selenium-image SnehaSP/MiniProject
 
     - name: Run tests in Docker container
       run: docker run --name test-runner pytest-selenium-image
