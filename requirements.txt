@@ -1,0 +1,6 @@
+selenium
+pytest
+pytest-html
+pytest-xdist
+faker
+pyyaml
